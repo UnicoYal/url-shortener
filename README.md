@@ -1,7 +1,7 @@
 <h1>Just practicing my golang skills.</h1> The base for this project is youtube video. But i dont like this, so Im trying to create my own service based on this idea and some configurations
 
 <h2>To Sum up</h2>
-This application is deployed on the server using the Selectel service.<br />
+This application is deployed on the server using the Selectel service. But deploy.yaml is correct(Check actions)<br />
 It’s impossible to test it in the Internet, because cloud storage is beyond my means.<br />
 Therefore, to test this application, you will need to install it locally, add your .env file with all the necessary data (see postgres.go file).<br />
 Then, by launching the application using go run /cmd/main.go, check requests through services such as Postman
