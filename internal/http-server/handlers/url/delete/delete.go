@@ -1,7 +1,6 @@
-package redirect
+package delete
 
 import (
-	"fmt"
 	"net/http"
 	"url-shortener/internal/models"
 	"url-shortener/lib/api/response"
@@ -14,9 +13,9 @@ import (
 
 func New(logger *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		op := "handlers.url.Redirect.New"
+		op := "handlers.url.Delete.New"
 
-		logger = logger.With(
+		logger.With(
 			slog.String("op", op),
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
@@ -24,28 +23,25 @@ func New(logger *slog.Logger) http.HandlerFunc {
 		alias := chi.URLParam(r, "alias")
 
 		if alias == "" {
-			errorMsg := "Invalid request: alias empty"
-			logger.Error(errorMsg)
+			logger.Error("Invalid request: Alias empty")
 
-			render.JSON(w, r, response.Error(errorMsg))
+			render.JSON(w, r, response.Error("Empty alias"))
 
 			return
 		}
 
-		urlToGet, err := models.GetUrl(alias)
+		_, err := models.DeleteUrl(alias)
 
 		if err != nil {
-			errorMsg := fmt.Sprintf("Cannot find url with alias: %s", alias)
+			logger.Error(err.Error())
 
-			logger.Error(errorMsg)
-
-			render.JSON(w, r, response.Error(errorMsg))
+			render.JSON(w, r, response.Error(err.Error()))
 
 			return
 		}
 
-		logger.Info("url found, redirecting")
+		logger.Info("Successful deletion of url")
 
-		http.Redirect(w, r, urlToGet.Url, http.StatusFound)
+		render.JSON(w, r, response.OK())
 	}
 }

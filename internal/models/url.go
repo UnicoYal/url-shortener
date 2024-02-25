@@ -49,10 +49,13 @@ func GetUrl(alias string) (object *URL, err error) {
 	return &urlToFind, nil
 }
 
-func DeleteUrl(alias string) *URL {
+func DeleteUrl(alias string) (object *URL, err error) {
 	var urlToDelete URL
 
-	database.Where("alias=", alias).Delete(&urlToDelete)
+	dbResult := database.Where("alias = ?", alias).Delete(&urlToDelete)
+	if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
+		return nil, gorm.ErrRecordNotFound
+	}
 
-	return &urlToDelete
+	return &urlToDelete, nil
 }

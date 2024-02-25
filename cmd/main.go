@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log/slog"
 
 	"url-shortener/internal/config"
 	"url-shortener/internal/http-server/server"
@@ -15,7 +14,6 @@ func main() {
 	fmt.Println(cfg)
 
 	logger := logger.SetupLogger(cfg.Env)
-	logger = logger.With(slog.String("env", cfg.Env))
 
 	router := router.SetupRouter(cfg, logger)
 
