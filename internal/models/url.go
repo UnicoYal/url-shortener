@@ -50,9 +50,9 @@ func GetUrl(alias string) (object *URL, err error) {
 }
 
 func DeleteUrl(alias string) *URL {
-	var urlToDelete *URL
+	var urlToDelete URL
 
 	database.Where("alias=", alias).Delete(&urlToDelete)
 
-	return urlToDelete
+	return &urlToDelete
 }
