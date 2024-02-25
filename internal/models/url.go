@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"url-shortener/internal/storage/postgres"
 
 	"github.com/jinzhu/gorm"
@@ -10,8 +11,8 @@ var database *gorm.DB
 
 type URL struct {
 	*gorm.Model
-	Alias string `gorm:""json: "alias"`
-	Url   string `json: "url"`
+	Alias string `gorm:"text" json: "alias"`
+	Url   string `gorm:"text" json: "url"`
 }
 
 func init() {
@@ -20,7 +21,8 @@ func init() {
 	database.AutoMigrate(&URL{})
 }
 
-func (u *URL) SaveURL(url string, alias string) *URL {
+func SaveURL(url string, alias string) *URL {
+	u := &URL{}
 	u.Alias = alias
 	u.Url = url
 
@@ -30,8 +32,8 @@ func (u *URL) SaveURL(url string, alias string) *URL {
 	return u
 }
 
-func GetUrl(alias string) *URL {
-	var urlToFind *URL
+func GetUrl(alias string) (object *URL, err error) {
+	var urlToFind URL
 	// Second variant
 	// query, err := database.DB().Prepare("SELECT * FROM url WHERE alias = ?")
 	// if err != nil {
@@ -39,9 +41,12 @@ func GetUrl(alias string) *URL {
 	// }
 	// err = query.QueryRow(alias).Scan(&urlToFind)
 
-	database.Where("alias=", alias).Find(&urlToFind)
+	dbResult := database.Where("alias = ?", alias).Find(&urlToFind)
+	if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
+		return nil, gorm.ErrRecordNotFound
+	}
 
-	return urlToFind
+	return &urlToFind, nil
 }
 
 func DeleteUrl(alias string) *URL {
