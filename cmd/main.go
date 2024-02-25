@@ -17,7 +17,7 @@ func main() {
 	logger := logger.SetupLogger(cfg.Env)
 	logger = logger.With(slog.String("env", cfg.Env))
 
-	router := router.SetupRouter(logger)
+	router := router.SetupRouter(cfg, logger)
 
 	logger.Info("Server is starting on address: %s", cfg.HTTPServer.Address)
 
