@@ -64,3 +64,30 @@ Response
   "status": "OK",
 }
 ```
+
+<h2>Examples of curl's</h2>
+
+> **Add new url with alias request**
+
+```
+curl --location 'localhost:8082/url' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic aWdvcjoxMjM0NQ==' \
+--data '{
+    "url": "https://yandex.ru",
+    "alias": "ya"
+}'
+```
+
+> **Redirect to existing url**
+
+```
+curl --location 'localhost:8082/ya'
+```
+
+> **Delete url by alias request**
+
+```
+curl --location --request DELETE 'localhost:8082/url/ya' \
+--header 'Authorization: Basic aWdvcjoxMjM0NQ=='
+```
