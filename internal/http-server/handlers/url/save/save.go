@@ -1,17 +1,18 @@
 package save
 
 import (
-	"golang.org/x/exp/slog"
 	"net/http"
 	"url-shortener/internal/models"
 	"url-shortener/lib/api/response"
+
+	"golang.org/x/exp/slog"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 )
 
 type Request struct {
-	Url string `json:"url"`
+	Url   string `json:"url"`
 	Alias string `json:"alias"`
 }
 
@@ -20,11 +21,7 @@ type Response struct {
 	Alias string `json:"alias,omitempty"`
 }
 
-type URLSaver interface {
-	SaveURL(url string, alias string) *models.URL
-}
-
-func New(logger *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
+func New(logger *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.url.save.New"
 
@@ -47,7 +44,7 @@ func New(logger *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 
 		logger.Info("request body decoded", slog.Any("request", req))
 
-		newUrl := urlSaver.SaveURL(req.Url, req.Alias)
+		newUrl := models.SaveURL(req.Url, req.Alias)
 
 		logger.Info("url added", slog.String("url", newUrl.Url))
 

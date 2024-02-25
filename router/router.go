@@ -1,9 +1,9 @@
 package router
 
 import (
+	"url-shortener/internal/http-server/handlers/url/redirect"
 	"url-shortener/internal/http-server/handlers/url/save"
 	mymiddleware "url-shortener/internal/http-server/my_middleware"
-	"url-shortener/internal/models"
 
 	"golang.org/x/exp/slog"
 
@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func SetupRouter(logger *slog.Logger, model *models.URL) *chi.Mux {
+func SetupRouter(logger *slog.Logger) *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
@@ -20,7 +20,8 @@ func SetupRouter(logger *slog.Logger, model *models.URL) *chi.Mux {
 	router.Use(middleware.URLFormat)
 	router.Use(mymiddleware.New(logger))
 
-	router.Post("/url", save.New(logger, model))
+	router.Post("/url", save.New(logger))
+	router.Get("/{alias}", redirect.New(logger))
 
 	return router
 }
